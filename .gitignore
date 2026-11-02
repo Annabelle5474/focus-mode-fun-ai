@@ -12,3 +12,6 @@ __pycache__/
 
 # YOLO model weights
 *.pt
+
+# docs
+docs/
