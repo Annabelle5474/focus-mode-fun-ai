@@ -35,6 +35,7 @@ while cap.isOpened():
   phone_detected = False
 
 # Check if a phone is detected in the frame
+# The code iterates through the results of the YOLO model to check if any of the detected objects belong to the "cell phone" class. If a cell phone is detected, it sets the `phone_detected` flag to `True`.
   for r in results:
     for c in r.boxes.cls:
       if model.names[int(c)] == "cell phone":
