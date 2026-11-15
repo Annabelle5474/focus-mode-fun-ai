@@ -82,7 +82,7 @@ def is_hand_near_phone(hand_landmarks, phone_box, width, height):
 
 def detect_phones(model, frame):
 
-    results = model(frame, verbose=False)
+    results = model(frame, conf=0.30,verbose=False)
 
     phone_boxes = []
 
