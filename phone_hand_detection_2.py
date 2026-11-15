@@ -1,10 +1,11 @@
 import cv2
 import mediapipe as mp
 from ultralytics import YOLO
-
+import pygame
+from pathlib import Path
 
 # ==========================================
-# 1. Initialize YOLO
+#  Initialize YOLO
 # ==========================================
 
 def initialize_yolo():
@@ -15,7 +16,7 @@ def initialize_yolo():
 
 
 # ==========================================
-# 2. Initialize MediaPipe Hands
+#  Initialize MediaPipe Hands
 # ==========================================
 
 def initialize_hands():
@@ -33,7 +34,7 @@ def initialize_hands():
 
 
 # ==========================================
-# 3. Initialize Webcam
+# Initialize Webcam
 # ==========================================
 
 def initialize_webcam():
@@ -48,9 +49,22 @@ def initialize_webcam():
 
     return cap
 
+# ==========================================
+# Initialize Alarm
+# ==========================================
+
+def initialize_alarm():
+
+    # Initialize the Pygame mixer for audio playback
+    pygame.mixer.init()
+
+    alarm = pygame.mixer.Sound("assets/alarm.wav")
+
+    return alarm
+
 
 # ==========================================
-# 4. Check Hand Near Phone
+#  Check Hand Near Phone
 # ==========================================
 
 def is_hand_near_phone(hand_landmarks, phone_box, width, height):
@@ -77,7 +91,7 @@ def is_hand_near_phone(hand_landmarks, phone_box, width, height):
 
 
 # ==========================================
-# 5. Detect Phone Using YOLO
+# Detect Phone Using YOLO
 # ==========================================
 
 def detect_phones(model, frame):
@@ -132,7 +146,7 @@ def detect_phones(model, frame):
 
 
 # ==========================================
-# 6. Detect Hands Using MediaPipe
+# Detect Hands Using MediaPipe
 # ==========================================
 
 def detect_hands(frame, hands, mp_hands, mp_drawing):
@@ -168,7 +182,7 @@ def detect_hands(frame, hands, mp_hands, mp_drawing):
 
 
 # ==========================================
-# 7. Check Hand Near Phone
+# Check Hand Near Phone
 # ==========================================
 
 def check_hand_near_phone(
@@ -204,7 +218,7 @@ def check_hand_near_phone(
 
 
 # ==========================================
-# 8. Display Detection Messages
+# Display Detection Messages
 # ==========================================
 
 def display_detection_messages(
@@ -253,12 +267,31 @@ def display_detection_messages(
             2
         )
 
-
 # ==========================================
-# 9. Main Webcam Loop
+# Control Alarm
 # ==========================================
 
-def run_detection(model, hands, mp_hands, mp_drawing, cap):
+def control_alarm(alarm, hand_near_phone):
+
+    if hand_near_phone:
+
+        # Play alarm continuously
+        # Checks whether the audio mixer is currently playing something
+        if not pygame.mixer.get_busy():
+
+            #repeat the alarm sound indefinitely until stopped
+            alarm.play(loops=-1)
+
+    else:
+
+        # Stop alarm when hand moves away
+        alarm.stop()
+        
+# ==========================================
+#  Main Webcam Loop
+# ==========================================
+
+def run_detection(model, hands, mp_hands, mp_drawing, cap, alarm):
 
     while cap.isOpened():
 
@@ -303,6 +336,9 @@ def run_detection(model, hands, mp_hands, mp_drawing, cap):
             phone_boxes,
             hand_near_phone
         )
+        
+        # Control alarm
+        control_alarm(alarm, hand_near_phone)
 
         # Display webcam
         cv2.imshow(
@@ -317,7 +353,7 @@ def run_detection(model, hands, mp_hands, mp_drawing, cap):
 
 
 # ==========================================
-# 10. Main Function
+# Main Function
 # ==========================================
 
 def main():
@@ -327,7 +363,10 @@ def main():
 
     # Initialize MediaPipe
     hands, mp_hands, mp_drawing = initialize_hands()
-
+    
+    # Initialize Alarm
+    alarm = initialize_alarm()
+    
     # Initialize webcam
     cap = initialize_webcam()
 
@@ -349,7 +388,8 @@ def main():
             hands,
             mp_hands,
             mp_drawing,
-            cap
+            cap,
+            alarm
         )
 
     finally:
@@ -360,12 +400,16 @@ def main():
         cv2.destroyAllWindows()
 
         hands.close()
+        
+        alarm.stop()
+         
+        pygame.mixer.quit()
 
         print("Detection stopped.")
 
 
 # ==========================================
-# 11. Run Focus Mode AI
+# Run Focus Mode AI
 # ==========================================
 
 if __name__ == "__main__":
