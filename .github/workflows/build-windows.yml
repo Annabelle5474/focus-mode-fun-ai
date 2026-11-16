@@ -1,0 +1,35 @@
+name: Build Windows Executable
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build executable
+        run: |
+          pyinstaller --noconfirm --clean --onefile --name FocusModeAI --collect-all ultralytics --collect-all mediapipe --collect-all cv2 --collect-all torch --add-data "yolo11n.pt;." --add-data "assets;assets" phone_hand_detection_2.py
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: FocusModeAI-Windows
+          path: dist/FocusModeAI.exe

@@ -4,13 +4,30 @@ from ultralytics import YOLO
 import pygame
 from pathlib import Path
 
+import os
+import sys
+
+# ==========================================
+#  Resource Path Helper
+# ==========================================    
+def resource_path(relative_path):
+    """Locate files in development and packaged applications."""
+
+    if getattr(sys, "frozen", False):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+
+    return os.path.join(base_path, relative_path)
+
 # ==========================================
 #  Initialize YOLO
 # ==========================================
 
 def initialize_yolo():
 
-    model = YOLO("yolo11n.pt")
+    # model = YOLO("yolo11n.pt")
+    model = YOLO(resource_path("yolo11n.pt"))
 
     return model
 
@@ -58,7 +75,8 @@ def initialize_alarm():
     # Initialize the Pygame mixer for audio playback
     pygame.mixer.init()
 
-    alarm = pygame.mixer.Sound("assets/alarm.wav")
+    # alarm = pygame.mixer.Sound("assets/alarm.wav")
+    alarm = pygame.mixer.Sound(resource_path("assets/alarm.wav"))
 
     return alarm
 

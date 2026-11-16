@@ -11,7 +11,7 @@ Focus Mode AI is a fun computer vision project that uses your laptop webcam to d
 - 📱 **Phone Detection** — Uses YOLO11 to detect phones in real time.
 - ✋ **Hand Detection** — Uses MediaPipe to detect hand landmarks.
 - 🤝 **Hand-Phone Interaction** — Experiments with detecting when your hand gets close to your phone.
-- 🔔 **Distraction Alerts** — Working towards visual and audio alerts when phone usage exceeds the defined time limit.
+- 🔔 **Distraction Alerts** — Working towards visual and audio alerts when phone usage.
 
 🛠️ Tech Stack
 
@@ -22,6 +22,8 @@ Focus Mode AI is a fun computer vision project that uses your laptop webcam to d
 | YOLO11n | Phone object detection |
 | MediaPipe | Hand landmark detection |
 | ByteTrack | Object tracking experiments |
+| Pygame | Audio alerts |
+| PyInstaller | Packaging the application |
 
 ## Getting Started
 
